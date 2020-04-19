@@ -4,8 +4,9 @@ option csharp_namespace = "GrpcDemo.Server.Protos";
 
 service Customer{
 	rpc GetCustomerInfo (CustomerLookupModel) returns (CustomerModel);
+	rpc GetNewCustomers (NewCustomerRequest) returns (stream CustomerModel);
 }
-
+message NewCustomerRequest{}
 message CustomerLookupModel{
 	int32 userId=1;
 }

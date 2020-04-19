@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
 using GrpcDemo.Server.Protos;
@@ -21,6 +22,14 @@ namespace GrpcDemo.Client
             var customerReply = await customerClient.GetCustomerInfoAsync(new CustomerLookupModel() { UserId = 1 });
             Console.WriteLine($"{customerReply.FirstName} {customerReply.LastName}");
 
+            using (var call = customerClient.GetNewCustomers(new NewCustomerRequest()))
+            {
+                while (await call.ResponseStream.MoveNext(CancellationToken.None))
+                {
+                    var currentCustomer = call.ResponseStream.Current;
+                    Console.WriteLine($"{currentCustomer.FirstName} {currentCustomer.LastName} {currentCustomer.EmailAddress}");
+                }
+            }
             Console.ReadKey();
         }
     }
